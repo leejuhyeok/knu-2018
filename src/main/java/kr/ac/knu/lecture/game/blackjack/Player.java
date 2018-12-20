@@ -1,5 +1,6 @@
 package kr.ac.knu.lecture.game.blackjack;
 
+import kr.ac.knu.lecture.exception.NoMoreCardException;
 import kr.ac.knu.lecture.exception.NotEnoughBalanceException;
 import lombok.Getter;
 
@@ -15,12 +16,17 @@ public class Player {
     private boolean isPlaying;
     @Getter
     private Hand hand;
+    @Getter
+    private boolean isDoubleDown;
+    private boolean isBlackJack;
 
     public Player(long seedMoney, Hand hand) {
         this.balance = seedMoney;
         this.hand = hand;
 
         isPlaying = false;
+        isDoubleDown = false;
+        isBlackJack = false;
     }
 
     public void reset() {
@@ -45,6 +51,9 @@ public class Player {
 
     public void win() {
         balance += currentBet * 2;
+        if(isBlackJack()){
+            balance += currentBet * 0.5;
+        }
         currentBet = 0;
     }
 
@@ -58,15 +67,34 @@ public class Player {
     }
 
     public Card hitCard() {
+        if(isDoubleDown == true)
+            return null;
         return hand.drawCard();
     }
 
     public void stand() {
         this.isPlaying = false;
+        this.isDoubleDown = false;
+        this.isBlackJack = false;
     }
 
+    public void doubleDown(){
+        if(hand.getCardList().size() > 2)
+            throw new NoMoreCardException();
+        if (balance < currentBet) {
+            throw new NotEnoughBalanceException();
+        }
+        balance -= currentBet;
+        currentBet = currentBet * 2;
 
+        hand.drawCard();
+        this.isDoubleDown = true;
+    }
 
-
+    public boolean isBlackJack(){
+        if(hand.getCardSum() == 21)
+            isBlackJack = true;
+        return isBlackJack;
+    }
 
 }
