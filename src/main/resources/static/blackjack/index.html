@@ -637,7 +637,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         }
 
         $('#bet').html(gameRoom.playerList[user.name].currentBet);
-        if(gameRoom.playerList[user.name].balance - parseInt($('#bet').html())<=0){
+        if(gameRoom.playerList[user.name].balance - parseInt($('#bet').html()) <= 0){
             $('#money').html('all-in');
         } else if(!gameRoom.finished){
             $('#money').html(gameRoom.playerList[user.name].balance);
