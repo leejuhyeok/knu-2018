@@ -66,7 +66,6 @@ public class GameRoom {
 
     public void stand(String name) {
         Player player = playerList.get(name);
-
         player.stand();
     }
 

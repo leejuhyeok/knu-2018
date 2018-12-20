@@ -393,13 +393,14 @@
         color: green;
         font-size: 21px;
     }
+
 </style>
 </head>
 <body>
 
 <div style="position: fixed; top: 0; left: 0;
 height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
-    <input type="text" size="2" id="nextCardInput" />
+    <input type="text" size="2" id="nextCardInput"/>
     <div id="nextCards">
     </div>
 </div>
@@ -431,7 +432,9 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         </div>
     </div>
     <div>
-        <div class="buttons"><div class="btn" id="logOut">logOut</div></div>
+        <div class="buttons">
+            <div class="btn" id="logOut">logOut</div>
+        </div>
     </div>
 </div>
 <div class="page" id="game" style="display: none">
@@ -555,27 +558,39 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
     })
 
     $('#more').click(function () {
-        var bet = 100;
-        var currentBet = parseInt($('#bet').html());
-        var money = parseInt($('#money').html());
-        if (money < bet) {
-            bet = money;
-        }
+        if($('#money').text()!='all-in'){
+            var bet = 1000;
+            var currentBet = parseInt($('#bet').html());
+            var money = parseInt($('#money').html());
+            if (money < bet) {
+                bet = money;
+            }
 
-        $('#bet').html(currentBet + bet);
-        $('#money').html(money - bet);
+            if(currentBet+bet<=10000){
+                $('#bet').html(currentBet + bet);
+                $('#money').html(money - bet);
+            }
+            if(parseInt($('#money').text())==0){
+                $('#money').html('all-in');
+            }
+        }
     });
 
     $('#less').click(function () {
-        var bet = 100;
-        var currentBet = parseInt($('#bet').html());
-        var money = parseInt($('#money').html());
-        if (currentBet < bet) {
-            bet = currentBet;
+         var bet = 1000;
+         var currentBet = parseInt($('#bet').html());
+        if(currentBet>=1000){
+            if($('#money').text()=='all-in'){
+                $('#money').html('0');
+            }
+            console.log(bet);
+            var money = parseInt($('#money').html());
+            if (currentBet < bet) {
+                bet = currentBet;
+            }
+            $('#bet').html(currentBet - bet);
+            $('#money').html(money + bet);
         }
-
-        $('#bet').html(currentBet - bet);
-        $('#money').html(money + bet);
     });
 
     function drawGameRoom(gameRoom) {
@@ -618,7 +633,13 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         }
 
         $('#bet').html(gameRoom.playerList[user.name].currentBet);
-        $('#money').html(gameRoom.playerList[user.name].balance);
+        if(gameRoom.playerList[user.name].balance==0){
+            $('#money').html('all-in');
+        }
+        else{
+            $('#money').html(gameRoom.playerList[user.name].balance);
+        }
+        console.log(gameRoom.playerList[user.name].balance);
     }
 
     function generateCardDiv(rank, suit) {
@@ -668,6 +689,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
 
         return "<div class='card " + className + "' data-value='" + rank + "'></div>";
     }
+
 </script>
 
 </html>
