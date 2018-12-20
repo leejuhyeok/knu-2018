@@ -146,9 +146,11 @@
         height: 123px;
         width: 79px;
     }
-    .mainBackground{
+
+    .mainBackground {
         background-image: url(/blackjack/Blackjack.png);
     }
+
     .message {
         font-size: 25px;
         margin-top: 30px;
@@ -497,7 +499,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
     $('#logout_button').click(function () {
         location.href = '/logout'
     })
-    $('#logOut').click(function() {
+    $('#logOut').click(function () {
         location.href = '/logOut'
     })
 
@@ -527,7 +529,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         });
     })
 
-    $('#nextCardInput').keypress(function(event) {
+    $('#nextCardInput').keypress(function (event) {
         if (event.which != 13) {
             return;
         }
@@ -561,7 +563,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
     })
 
     $('#more').click(function () {
-        if($('#money').text()!='all-in'){
+        if ($('#money').text() != 'all-in') {
             var bet = 1000;
             var currentBet = parseInt($('#bet').html());
             var money = parseInt($('#money').html());
@@ -569,11 +571,11 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
                 bet = money;
             }
 
-            if(currentBet+bet<=10000){
+            if (currentBet + bet <= 10000) {
                 $('#bet').html(currentBet + bet);
                 $('#money').html(money - bet);
             }
-            if(parseInt($('#money').text())==0){
+            if (parseInt($('#money').text()) == 0) {
                 $('#money').html('all-in');
             }
         }
@@ -582,8 +584,8 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
     $('#less').click(function () {
         var bet = 1000;
         var currentBet = parseInt($('#bet').html());
-        if(currentBet>=1000){
-            if($('#money').text()=='all-in'){
+        if (currentBet >= 1000) {
+            if ($('#money').text() == 'all-in') {
                 $('#money').html('0');
             }
             console.log(bet);
@@ -609,11 +611,10 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
             $('#less').hide();
             $('#hit').show();
             $('#stand').show();
-
         }
 
         $('#nextCards').html("");
-        gameRoom.deck.cardList.forEach(function(card) {
+        gameRoom.deck.cardList.forEach(function (card) {
             $('#nextCards').append(card.rank + ", ");
         })
 
@@ -636,13 +637,17 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
             $('.player-cards').append('<div id="playerTotal" class="player-total">' + gameRoom.playerList[user.name].hand.cardSum + '</div>')
         }
 
-        $('#bet').html(gameRoom.playerList[user.name].currentBet);
-        if(gameRoom.playerList[user.name].balance - parseInt($('#bet').html()) <= 0){
-            $('#money').html('all-in');
-        } else if(!gameRoom.finished){
-            $('#money').html(gameRoom.playerList[user.name].balance);
+        if(gameRoom.playerList[user.name].balance >  parseInt($('#bet').html())){
+            $('#bet').html(gameRoom.playerList[user.name].currentBet);
+        } else{
+            $('#bet').html(gameRoom.playerList[user.name].balance);
         }
-        else{
+
+        if (!gameRoom.finished) {
+            $('#money').html(gameRoom.playerList[user.name].balance);
+        } else if (gameRoom.playerList[user.name].balance - parseInt($('#bet').html()) <= 0) {
+            $('#money').html('all-in');
+        } else {
             $('#money').html(gameRoom.playerList[user.name].balance - parseInt($('#bet').html()));
         }
         console.log(gameRoom.playerList[user.name].balance);
