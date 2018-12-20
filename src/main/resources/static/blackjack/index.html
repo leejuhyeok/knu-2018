@@ -55,10 +55,11 @@
     }
 
     .page {
+        color: #FFFFFF;
+        font-size: 15px;
         width: auto;
         max-width: 900px;
         margin: 0 auto;
-        background-color: #fff;
         min-height: 500px;
         text-align: center;
     }
@@ -145,7 +146,9 @@
         height: 123px;
         width: 79px;
     }
-
+    .mainBackground{
+        background-image: url(/blackjack/Blackjack.png);
+    }
     .message {
         font-size: 25px;
         margin-top: 30px;
@@ -390,13 +393,13 @@
     }
 
     .money {
-        color: green;
+        color: #FFFFFF;
         font-size: 21px;
     }
 
 </style>
 </head>
-<body>
+<body class="mainBackground">
 
 <div style="position: fixed; top: 0; left: 0;
 height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
@@ -606,6 +609,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
             $('#less').hide();
             $('#hit').show();
             $('#stand').show();
+
         }
 
         $('#nextCards').html("");
@@ -637,7 +641,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
             $('#money').html('all-in');
         }
         else{
-            $('#money').html(gameRoom.playerList[user.name].balance);
+            $('#money').html(gameRoom.playerList[user.name].balance-gameRoom.playerList[user.name].currentBet);
         }
         console.log(gameRoom.playerList[user.name].balance);
     }

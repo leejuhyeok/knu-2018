@@ -19,7 +19,6 @@ public class Player {
     public Player(long seedMoney, Hand hand) {
         this.balance = seedMoney;
         this.hand = hand;
-
         isPlaying = false;
     }
 
@@ -32,29 +31,27 @@ public class Player {
         if (balance < bet) {
             throw new NotEnoughBalanceException();
         }
-        balance -= bet;
         currentBet = bet;
 
         isPlaying = true;
     }
 
     public void deal() {
+        balance -= currentBet;
         hand.drawCard();
         hand.drawCard();
     }
 
     public void win() {
         balance += currentBet * 2;
-        currentBet = 0;
     }
 
     public void tie() {
         balance += currentBet;
-        currentBet = 0;
     }
 
     public void lost() {
-        currentBet = 0;
+        balance+=0;
     }
 
     public Card hitCard() {
@@ -63,6 +60,13 @@ public class Player {
 
     public void stand() {
         this.isPlaying = false;
+    }
+
+    public void settingBet(){
+        if(currentBet>balance){
+            currentBet=balance;
+        }
+        balance-=currentBet;
     }
 
 
