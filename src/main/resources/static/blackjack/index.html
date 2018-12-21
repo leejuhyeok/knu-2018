@@ -47,7 +47,7 @@
         color: #333;
         font-size: 15px;
         line-height: 40px;
-        background-color: #FFFFFF;
+        background-color: #000000;
     }
 
     .clear {
@@ -397,6 +397,12 @@
         font-size: 21px;
     }
 
+
+
+
+
+
+
 </style>
 </head>
 <body class="mainBackground">
@@ -409,12 +415,6 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
 </div>
 
 <div style="height: 100px; width: 100%">
-</div>
-
-<div>
-    <div class="buttons">
-        <div class="btn" id="logout_button">logout</div>
-    </div>
 </div>
 
 <div class="page" id="login">
@@ -436,11 +436,19 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
     </div>
     <div>
         <div class="buttons">
-            <div class="btn" id="logOut">logOut</div>
+            <div class="btn" id="logout_button">logout</div>
         </div>
     </div>
 </div>
 <div class="page" id="game" style="display: none">
+    <div class="user-info">
+        <div class="user" id="userInfo"></div>
+    </div>
+    <div>
+        <div class="buttons">
+            <div class="btn" id="logout" style="display: none">logout</div>
+        </div>
+    </div>
 
     <div class="dealer-cards"></div>
     <div class="clear"></div>
@@ -448,6 +456,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
     <div class="buttons">
         <div class="btn" id="hit">Hit</div>
         <div class="btn" id="stand">Stand</div>
+        <div class="btn" id="doubleDown">Double-Down</div>
     </div>
     <div class="buttons">
         <div class="btn" id="deal">Deal</div>
@@ -497,8 +506,8 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
     $('#logout_button').click(function () {
         location.href = '/logout'
     })
-    $('#logOut').click(function() {
-        location.href = '/logOut'
+    $('#logout').click(function() {
+        location.href = '/logout'
     })
 
     $('#create_room_button').click(function () {
@@ -509,6 +518,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
             $('#login').hide();
             $('#lobby').hide();
             $('#game').show();
+            $('#logout').show();
             gameRoomId = data.roomId;
             drawGameRoom(data);
         });
@@ -516,7 +526,10 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
 
     $('#deal').click(function () {
         var bet = parseInt($('#bet').html());
-
+        if(bet<=0){
+            alert("1000원 이상 배팅을 해주세요.");
+        }
+        else{
         $.ajax({
             type: 'POST',
             url: '/api/black-jack/rooms/' + gameRoomId + '/bet',
@@ -525,6 +538,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         }).done(function (data) {
             drawGameRoom(data);
         });
+        }
     })
 
     $('#nextCardInput').keypress(function(event) {
@@ -560,6 +574,18 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         });
     })
 
+    $('#doubleDown').click(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/api/black-jack/rooms/' + gameRoomId + '/doubleDown',
+        }).done(function (data) {
+            drawGameRoom(data);
+        }).fail(function () {
+            alert("더블다운을 할 수 없습니다.");
+        });
+    })
+
+
     $('#more').click(function () {
         if($('#money').text()!='all-in'){
             var bet = 1000;
@@ -579,9 +605,10 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         }
     });
 
+
     $('#less').click(function () {
-         var bet = 1000;
-         var currentBet = parseInt($('#bet').html());
+        var bet = 1000;
+        var currentBet = parseInt($('#bet').html());
         if(currentBet>=1000){
             if($('#money').text()=='all-in'){
                 $('#money').html('0');
@@ -597,20 +624,28 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
     });
 
     function drawGameRoom(gameRoom) {
+        $('#userInfo').html("");
+        $('#userInfo').append(user.name + ": " + gameRoom.playerList[user.name].balance);
         if (gameRoom.finished) {
             $('#deal').show();
             $('#more').show();
             $('#less').show();
             $('#hit').hide();
             $('#stand').hide();
+            $("#doubleDown").hide();
         } else {
             $('#deal').hide();
             $('#more').hide();
             $('#less').hide();
             $('#hit').show();
             $('#stand').show();
-
+             if(gameRoom.playerList[user.name].doubleDown == false)
+                $("#doubleDown").show();
+            else{
+                $("#doubleDown").hide();
+            }
         }
+
 
         $('#nextCards').html("");
         gameRoom.deck.cardList.forEach(function(card) {
@@ -637,11 +672,13 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         }
 
         $('#bet').html(gameRoom.playerList[user.name].currentBet);
-        if(gameRoom.playerList[user.name].balance==0){
+        if(gameRoom.playerList[user.name].balance - parseInt($('#bet').html()) <= 0){
             $('#money').html('all-in');
+        } else if(!gameRoom.finished){
+            $('#money').html(gameRoom.playerList[user.name].balance);
         }
         else{
-            $('#money').html(gameRoom.playerList[user.name].balance-gameRoom.playerList[user.name].currentBet);
+            $('#money').html(gameRoom.playerList[user.name].balance - parseInt($('#bet').html()));
         }
         console.log(gameRoom.playerList[user.name].balance);
     }
@@ -693,6 +730,12 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
 
         return "<div class='card " + className + "' data-value='" + rank + "'></div>";
     }
+
+
+
+
+
+
 
 </script>
 
