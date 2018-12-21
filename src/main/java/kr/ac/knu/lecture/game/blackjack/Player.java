@@ -51,7 +51,6 @@ public class Player {
         if(isBlackJack()){
             balance += currentBet * 0.5;
         }
-        currentBet = 0;
     }
 
     public void tie() {
