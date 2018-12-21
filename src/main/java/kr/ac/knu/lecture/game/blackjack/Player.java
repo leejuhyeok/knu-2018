@@ -76,6 +76,8 @@ public class Player {
         this.isPlaying = false;
         this.isDoubleDown = false;
         this.isBlackJack = false;
+        if(this.currentBet > 10000)
+            this.currentBet = 10000;
     }
 
     public void doubleDown(){

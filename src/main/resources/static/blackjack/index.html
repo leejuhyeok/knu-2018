@@ -407,6 +407,7 @@
 
 
 
+
 </style>
 </head>
 <body class="mainBackground">
@@ -433,7 +434,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
 
 </div>
 <div class="page" id="lobby" style="display: none">
-    <div class = "gameRank" id="rank"></div>
+    <div class="gameRank" id="rank"></div>
     <div>
         <div class="buttons">
             <div class="btn" id="create_room_button">Create</div>
@@ -692,6 +693,9 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         }
 
         $('#bet').html(gameRoom.playerList[user.name].currentBet);
+        if(gameRoom.playerList[user.name].balance == 0){
+              $('#bet').html("0");
+        }
         if (!gameRoom.finished) {
             $('#money').html(gameRoom.playerList[user.name].balance);
         } else if (gameRoom.playerList[user.name].balance - parseInt($('#bet').html()) <= 0) {
@@ -749,6 +753,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
 
         return "<div class='card " + className + "' data-value='" + rank + "'></div>";
     }
+
 
 
 
