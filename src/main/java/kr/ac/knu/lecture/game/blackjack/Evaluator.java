@@ -1,5 +1,8 @@
 package kr.ac.knu.lecture.game.blackjack;
 
+import kr.ac.knu.lecture.controller.api.BlackjackApiController;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import java.util.Map;
 
 /**
@@ -21,17 +24,19 @@ public class Evaluator {
 
         int dealerResult = dealer.getHand().getCardSum();
 
-        if (dealerResult > 21) {
-            playerMap.forEach((s, player) -> player.win());
-
-            return true;
-        }
+//        if (dealerResult > 21) {
+//            playerMap.forEach((s, player) -> player.win());
+//
+//            return true;
+//        }
 
         playerMap.forEach((s, player) -> {
             int playerResult = player.getHand().getCardSum();
             if (playerResult > 21) {
                 player.lost();
-            } else if (playerResult > dealerResult) {
+            }else if (dealerResult > 21){
+                player.win();
+            }else if (playerResult > dealerResult) {
                 player.win();
             } else if (playerResult == dealerResult) {
                 player.tie();
@@ -42,6 +47,5 @@ public class Evaluator {
 
         return true;
     }
-
 
 }

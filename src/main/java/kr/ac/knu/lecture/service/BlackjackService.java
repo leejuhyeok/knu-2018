@@ -73,6 +73,14 @@ public class BlackjackService {
         updateGameResult(gameRoom);
         return gameRoom;
     }
+    public GameRoom doubleDown(String roomId, User user) {
+        GameRoom gameRoom = gameRoomMap.get(roomId);
+
+        gameRoom.doubleDown(user.getName());
+
+        updateGameResult(gameRoom);
+        return gameRoom;
+    }
 
     private void updateGameResult(GameRoom gameRoom) {
         if (gameRoom.isFinished()) {

@@ -4,6 +4,7 @@ import kr.ac.knu.lecture.domain.User;
 import kr.ac.knu.lecture.game.blackjack.GameRoom;
 import kr.ac.knu.lecture.repository.UserRepository;
 import kr.ac.knu.lecture.service.BlackjackService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/black-jack")
 @CrossOrigin
-
+@Slf4j
 public class BlackjackApiController {
     @Autowired
     private BlackjackService blackjackService;
@@ -52,6 +53,11 @@ public class BlackjackApiController {
     public GameRoom stand(@AuthenticationPrincipal User user, @PathVariable String roomId) {
         User currentUser = userRepository.getOne(user.getName());
         return blackjackService.stand(roomId, currentUser);
+    }
+    @PostMapping("/rooms/{roomId}/doubleDown")
+    public GameRoom doubledown(@AuthenticationPrincipal User user, @PathVariable String roomId) {
+        User currentUser = userRepository.getOne(user.getName());
+        return blackjackService.doubleDown(roomId, currentUser);
     }
 
     @PutMapping("/rooms/{roomId}/deck/cards")

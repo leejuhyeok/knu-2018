@@ -47,7 +47,7 @@
         color: #333;
         font-size: 15px;
         line-height: 40px;
-        background-color: #FFFFFF;
+        background-color: #000000;
     }
 
     .clear {
@@ -55,10 +55,11 @@
     }
 
     .page {
+        color: #FFFFFF;
+        font-size: 15px;
         width: auto;
         max-width: 900px;
         margin: 0 auto;
-        background-color: #fff;
         min-height: 500px;
         text-align: center;
     }
@@ -145,7 +146,9 @@
         height: 123px;
         width: 79px;
     }
-
+    .mainBackground{
+        background-image: url(/blackjack/Blackjack.png);
+    }
     .message {
         font-size: 25px;
         margin-top: 30px;
@@ -390,27 +393,28 @@
     }
 
     .money {
-        color: green;
+        color: #FFFFFF;
         font-size: 21px;
     }
+
+
+
+
+
+
+
 </style>
 </head>
-<body>
+<body class="mainBackground">
 
 <div style="position: fixed; top: 0; left: 0;
 height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
-    <input type="text" size="2" id="nextCardInput" />
+    <input type="text" size="2" id="nextCardInput"/>
     <div id="nextCards">
     </div>
 </div>
 
 <div style="height: 100px; width: 100%">
-</div>
-
-<div>
-    <div class="buttons">
-        <div class="btn" id="logout_button">logout</div>
-    </div>
 </div>
 
 <div class="page" id="login">
@@ -431,10 +435,20 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         </div>
     </div>
     <div>
-        <div class="buttons"><div class="btn" id="logOut">logOut</div></div>
+        <div class="buttons">
+            <div class="btn" id="logout_button">logout</div>
+        </div>
     </div>
 </div>
 <div class="page" id="game" style="display: none">
+    <div class="user-info">
+        <div class="user" id="userInfo"></div>
+    </div>
+    <div>
+        <div class="buttons">
+            <div class="btn" id="logout" style="display: none">logout</div>
+        </div>
+    </div>
 
     <div class="dealer-cards"></div>
     <div class="clear"></div>
@@ -442,6 +456,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
     <div class="buttons">
         <div class="btn" id="hit">Hit</div>
         <div class="btn" id="stand">Stand</div>
+        <div class="btn" id="doubleDown">Double-Down</div>
     </div>
     <div class="buttons">
         <div class="btn" id="deal">Deal</div>
@@ -491,8 +506,8 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
     $('#logout_button').click(function () {
         location.href = '/logout'
     })
-    $('#logOut').click(function() {
-        location.href = '/logOut'
+    $('#logout').click(function() {
+        location.href = '/logout'
     })
 
     $('#create_room_button').click(function () {
@@ -503,6 +518,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
             $('#login').hide();
             $('#lobby').hide();
             $('#game').show();
+            $('#logout').show();
             gameRoomId = data.roomId;
             drawGameRoom(data);
         });
@@ -510,7 +526,10 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
 
     $('#deal').click(function () {
         var bet = parseInt($('#bet').html());
-
+        if(bet<=0){
+            alert("1000원 이상 배팅을 해주세요.");
+        }
+        else{
         $.ajax({
             type: 'POST',
             url: '/api/black-jack/rooms/' + gameRoomId + '/bet',
@@ -519,6 +538,7 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         }).done(function (data) {
             drawGameRoom(data);
         });
+        }
     })
 
     $('#nextCardInput').keypress(function(event) {
@@ -554,44 +574,78 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         });
     })
 
-    $('#more').click(function () {
-        var bet = 100;
-        var currentBet = parseInt($('#bet').html());
-        var money = parseInt($('#money').html());
-        if (money < bet) {
-            bet = money;
-        }
+    $('#doubleDown').click(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/api/black-jack/rooms/' + gameRoomId + '/doubleDown',
+        }).done(function (data) {
+            drawGameRoom(data);
+        }).fail(function () {
+            alert("더블다운을 할 수 없습니다.");
+        });
+    })
 
-        $('#bet').html(currentBet + bet);
-        $('#money').html(money - bet);
+
+    $('#more').click(function () {
+        if($('#money').text()!='all-in'){
+            var bet = 1000;
+            var currentBet = parseInt($('#bet').html());
+            var money = parseInt($('#money').html());
+            if (money < bet) {
+                bet = money;
+            }
+
+            if(currentBet+bet<=10000){
+                $('#bet').html(currentBet + bet);
+                $('#money').html(money - bet);
+            }
+            if(parseInt($('#money').text())==0){
+                $('#money').html('all-in');
+            }
+        }
     });
 
-    $('#less').click(function () {
-        var bet = 100;
-        var currentBet = parseInt($('#bet').html());
-        var money = parseInt($('#money').html());
-        if (currentBet < bet) {
-            bet = currentBet;
-        }
 
-        $('#bet').html(currentBet - bet);
-        $('#money').html(money + bet);
+    $('#less').click(function () {
+        var bet = 1000;
+        var currentBet = parseInt($('#bet').html());
+        if(currentBet>=1000){
+            if($('#money').text()=='all-in'){
+                $('#money').html('0');
+            }
+            console.log(bet);
+            var money = parseInt($('#money').html());
+            if (currentBet < bet) {
+                bet = currentBet;
+            }
+            $('#bet').html(currentBet - bet);
+            $('#money').html(money + bet);
+        }
     });
 
     function drawGameRoom(gameRoom) {
+        $('#userInfo').html("");
+        $('#userInfo').append(user.name + ": " + gameRoom.playerList[user.name].balance);
         if (gameRoom.finished) {
             $('#deal').show();
             $('#more').show();
             $('#less').show();
             $('#hit').hide();
             $('#stand').hide();
+            $("#doubleDown").hide();
         } else {
             $('#deal').hide();
             $('#more').hide();
             $('#less').hide();
             $('#hit').show();
             $('#stand').show();
+             if(gameRoom.playerList[user.name].doubleDown == false)
+                $("#doubleDown").show();
+            else{
+                $("#doubleDown").hide();
+            }
         }
+
 
         $('#nextCards').html("");
         gameRoom.deck.cardList.forEach(function(card) {
@@ -618,7 +672,15 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
         }
 
         $('#bet').html(gameRoom.playerList[user.name].currentBet);
-        $('#money').html(gameRoom.playerList[user.name].balance);
+        if(gameRoom.playerList[user.name].balance - parseInt($('#bet').html()) <= 0){
+            $('#money').html('all-in');
+        } else if(!gameRoom.finished){
+            $('#money').html(gameRoom.playerList[user.name].balance);
+        }
+        else{
+            $('#money').html(gameRoom.playerList[user.name].balance - parseInt($('#bet').html()));
+        }
+        console.log(gameRoom.playerList[user.name].balance);
     }
 
     function generateCardDiv(rank, suit) {
@@ -668,6 +730,13 @@ height: 100px; width: 100%; background-color: #EEFFEE; opacity: 0.7;">
 
         return "<div class='card " + className + "' data-value='" + rank + "'></div>";
     }
+
+
+
+
+
+
+
 </script>
 
 </html>

@@ -66,8 +66,11 @@ public class GameRoom {
 
     public void stand(String name) {
         Player player = playerList.get(name);
-
         player.stand();
+    }
+    public void doubleDown(String name) {
+        Player player = playerList.get(name);
+        player.doubleDown();
     }
 
     public void playDealer() {
