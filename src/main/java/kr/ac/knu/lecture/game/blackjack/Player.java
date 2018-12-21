@@ -48,6 +48,10 @@ public class Player {
 
     public void win() {
         balance += currentBet * 2;
+        if(isBlackJack()){
+            balance += currentBet * 0.5;
+        }
+        currentBet = 0;
     }
 
     public void tie() {
@@ -61,7 +65,12 @@ public class Player {
     public Card hitCard() {
         if(isDoubleDown == true)
             return null;
-        return hand.drawCard();
+        Card card = hand.drawCard();
+        int cardSum =  hand.getCardSum();
+        if(cardSum > 21)
+            throw new NoMoreCardException();
+
+        return card;
     }
 
     public void stand() {
@@ -82,20 +91,11 @@ public class Player {
         hand.drawCard();
         this.isDoubleDown = true;
     }
+
     public boolean isBlackJack(){
         if(hand.getCardSum() == 21)
             isBlackJack = true;
         return isBlackJack;
     }
-    public void settingBet(){
-        if(currentBet>balance){
-            currentBet=balance;
-        }
-        balance-=currentBet;
-    }
-
-
-
-
 
 }
