@@ -54,7 +54,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
                 .and()
-                .logout().logoutSuccessUrl("/blackjack/index.html").permitAll()
+                .logout().logoutSuccessUrl("/").permitAll()
                 .and()
                 .headers().frameOptions().disable()
                 .and()
@@ -90,7 +90,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         tokenServices.setRestTemplate(naverTemplate);
         tokenServices.setPrincipalExtractor(naverPrincipalExtractor());
         naverFilter.setTokenServices(tokenServices);
-        naverFilter.setAuthenticationSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> httpServletResponse.sendRedirect("/blackjack/index.html"));
+        naverFilter.setAuthenticationSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> httpServletResponse.sendRedirect("/"));
 
         return naverFilter;
 

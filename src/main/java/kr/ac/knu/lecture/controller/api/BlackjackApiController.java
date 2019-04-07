@@ -34,6 +34,7 @@ public class BlackjackApiController {
     @PostMapping("/rooms")
     public GameRoom createRoom(@AuthenticationPrincipal User user) {
         User currentUser = userRepository.getOne(user.getName());
+        log.info(user.getName());
         return blackjackService.createGameRoom(currentUser);
     }
 

@@ -36,13 +36,10 @@ public class Deck {
     }
 
     public Card drawCard() {
+        //게임에서 덱의 카드가 떨어지면 안됨으로 덱의 카드가 10개 이하 일때 재 셔플
         if (cardList.size() <= 10) {
             createCards(number);
             Collections.shuffle(cardList);
-            // TODO 실제 게임에서 이런 일이 절대로 일어나면 안되겠죠?
-            // 그래서 보통 게임에서는 N 장의 카드가 남으면 모든 카드를 합쳐서 다시 셔플 합니다.
-            // 코드에 그런 내용이 들어가야 함.
-            //throw new NoMoreCardException();
         }
         return cardList.remove(0);
     }
